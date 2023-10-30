@@ -4,6 +4,7 @@ import { emailTemplate } from '../helpers/email.js';
 import { hashPassword, comparePassword } from '../helpers/auth.js';
 import User from '../models/user.js';
 import { nanoid } from 'nanoid';
+import validator from 'email-validator';
 
 export const welcome = (req, res) => {
   res.json({
@@ -16,6 +17,24 @@ export const preRegister = async (req, res) => {
   // only when user click on that email link, registeration completes
   try {
     const { email, password } = req.body;
+
+    if (!validator.validate(email)) {
+      return res.json({ error: 'A valid email is required' });
+    }
+    if (!password) {
+      return res.json({ error: 'Password is required' });
+    }
+
+    if (password && password?.length < 6) {
+      return res.json({ error: 'Password length must be more then 6 sybmols' });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return res.json({ error: 'User is taken' });
+    }
+
     const token = jwt.sign({ email, password }, config.JWT_SECRETS, { expiresIn: '1h' });
 
     config.AWSSES.sendEmail(
@@ -64,16 +83,50 @@ export const register = async (req, res) => {
       expiresIn: '7d',
     });
 
-	user.password = undefined;
-	user.resetCode = undefined;
+    user.password = undefined;
+    user.resetCode = undefined;
 
-	return res.json({
-		token,
-		refreshToken,
-		user
-	})
+    return res.json({
+      token,
+      refreshToken,
+      user,
+    });
   } catch (error) {
     console.log(error);
     return res.json({ error: 'Something went wrong!!!!!' });
+  }
+};
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    //1.find user
+    const user = await User.findOne({ email });
+
+    //2.compare password
+    const match = await comparePassword(password, user.password);
+    if (!match) {
+      return res.json({ error: 'Wrong password!' });
+    }
+    //3.create jwt token
+
+    const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
+      expiresIn: '1h',
+    });
+    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
+      expiresIn: '7d',
+    });
+
+    //4.send res
+    user.password = undefined;
+    user.resetCode = undefined;
+
+    return res.json({
+      token,
+      refreshToken,
+      user,
+    });
+  } catch (error) {
+    return res.json({ error: 'Something went wrong. Try again' });
   }
 };

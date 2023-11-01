@@ -1,10 +1,11 @@
 import express from 'express';
 
 import * as auth from '../controllers/auth.js';
+import { requireSignin } from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.get('/', auth.welcome);
+router.get('/', requireSignin, auth.welcome);
 router.post('/pre-register', auth.preRegister);
 router.post('/register', auth.register);
 router.post('/login', auth.login);

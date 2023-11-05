@@ -6,6 +6,25 @@ import User from '../models/user.js';
 import { nanoid } from 'nanoid';
 import validator from 'email-validator';
 
+const tokenAndUserResponse = (req, res, user) => {
+  const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
+    expiresIn: '1h',
+  });
+
+  const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
+    expiresIn: '7d',
+  });
+
+  user.password = undefined;
+  user.resetCode = undefined;
+
+  return res.json({
+    token,
+    refreshToken,
+    user,
+  });
+};
+
 export const welcome = (req, res) => {
   res.json({
     data: 'hello from nodejs api from routes yay',
@@ -69,28 +88,19 @@ export const register = async (req, res) => {
 
     const hashedPassword = await hashPassword(password);
 
+    const userExist = await User.findOne({ email });
+
+    if (userExist) {
+      return res.json({ error: 'User is taken' });
+    }
+
     const user = await new User({
       username: nanoid(6),
       email,
       password: hashedPassword,
     }).save();
 
-    const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
-      expiresIn: '1h',
-    });
-
-    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
-      expiresIn: '7d',
-    });
-
-    user.password = undefined;
-    user.resetCode = undefined;
-
-    return res.json({
-      token,
-      refreshToken,
-      user,
-    });
+    tokenAndUserResponse(req, res, user);
   } catch (error) {
     console.log(error);
     return res.json({ error: 'Something went wrong!!!!!' });
@@ -110,22 +120,7 @@ export const login = async (req, res) => {
     }
     //3.create jwt token
 
-    const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
-      expiresIn: '1h',
-    });
-    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
-      expiresIn: '7d',
-    });
-
-    //4.send res
-    user.password = undefined;
-    user.resetCode = undefined;
-
-    return res.json({
-      token,
-      refreshToken,
-      user,
-    });
+    tokenAndUserResponse(req, res, user);
   } catch (error) {
     return res.json({ error: 'Something went wrong. Try again' });
   }
@@ -176,26 +171,37 @@ export const forgotPassword = async (req, res) => {
 
 export const accessAccount = async (req, res) => {
   try {
-    const {resetCode} = jwt.verify(req.body.resetCode, config.JWT_SECRETS);
+    const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRETS);
     const user = await User.findOneAndUpdate({ resetCode }, { resetCode: '' });
 
-    const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
-      expiresIn: '1h',
-    });
-    const refreshToken = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
-      expiresIn: '7d',
-    });
-
-    user.password = undefined;
-    user.resetCode = undefined;
-
-    return res.json({
-      token,
-      refreshToken,
-      user,
-    });
+    tokenAndUserResponse(req, res, user);
   } catch (error) {
     console.log(error);
     res.json({ error: 'Something went wrong. Try again.' });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const { _id } = jwt.verify(req.headers.refresh_token, config.JWT_SECRETS);
+
+    const user = await User.findById(_id);
+
+    tokenAndUserResponse(req, res, user);
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ error: 'Refresh token failed.' });
+  }
+};
+
+export const currentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.password = undefined;
+    user.resetCode = undefined;
+    return res.json(user);
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ error: 'User not found.' });
   }
 };

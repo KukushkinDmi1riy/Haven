@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { emailTemplate } from '../helpers/email.js';
 import { hashPassword, comparePassword } from '../helpers/auth.js';
 import User from '../models/user.js';
-import { nanoid } from 'nanoid';
+import nanoid from 'nanoid';
 import validator from 'email-validator';
 
 const tokenAndUserResponse = (req, res, user) => {

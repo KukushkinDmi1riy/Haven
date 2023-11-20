@@ -7,6 +7,7 @@ import nanoid from 'nanoid';
 import validator from 'email-validator';
 
 const tokenAndUserResponse = (req, res, user) => {
+
   const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
     expiresIn: '1h',
   });
@@ -173,7 +174,7 @@ export const accessAccount = async (req, res) => {
   try {
     const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRETS);
     const user = await User.findOneAndUpdate({ resetCode }, { resetCode: '' });
-
+	console.log(user, 'user')
     tokenAndUserResponse(req, res, user);
   } catch (error) {
     console.log(error);

@@ -15,6 +15,8 @@
 		"server"
 	],
 	"dependencies": {
-		"concurrently": "^8.2.2"
+		"concurrently": "^8.2.2",
+		"node-geocoder": "^4.2.0",
+		"slugify": "^1.6.6"
 	}
 }

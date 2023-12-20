@@ -80,7 +80,6 @@ export const create = async (req, res) => {
     }
 
     const geo = await config.GOOGLE_GEOCODER.geocode(address);
-    
 
     const ad = await new Ad({
       ...req.body,
@@ -111,5 +110,22 @@ export const create = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.json({ error: 'Something went wrong. Try later.' });
+  }
+};
+
+export const ads = async (req, res) => {
+  try {
+    const adsForSell = await Ad.find({ action: 'Sell' }).select(
+      '-googleMap -location -photo.Key -photo.key -photo.ETag',
+    ).sort({createdAt: -1}).limit(12);
+
+	const adsForRent = await Ad.find({ action: 'Rent' })
+    .select('-googleMap -location -photo.Key -photo.key -photo.ETag')
+    .sort({ createdAt: -1 })
+    .limit(12);
+
+	res.json({adsForSell, adsForRent})
+  } catch (error) {
+    console.log(error);
   }
 };

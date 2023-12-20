@@ -67,32 +67,40 @@ export default function AdForm({ action, type }) {
           className="form-control mb-3"
           onValueChange={(value) => setAd({ ...ad, price: value })}
         />
-        <input
-          type="number"
-          min="0"
-          className="form-control mb-3"
-          placeholder="Enter how many bedrooms"
-          value={ad.bedrooms}
-          onChange={(e) => setAd({ ...ad, bedrooms: e.target.value })}
-          required
-        />
-        <input
-          type="number"
-          min="0"
-          className="form-control mb-3"
-          placeholder="Enter how many bathrooms"
-          value={ad.toilets}
-          onChange={(e) => setAd({ ...ad, bathrooms: e.target.value })}
-          required
-        />
-        <input
-          type="number"
-          min="0"
-          className="form-control mb-3"
-          placeholder="Enter how many car parks"
-          value={ad.carpark}
-          onChange={(e) => setAd({ ...ad, carpark: e.target.value })}
-        />
+
+        {type === 'House' ? (
+          <>
+            <input
+              type="number"
+              min="0"
+              className="form-control mb-3"
+              placeholder="Enter how many bedrooms"
+              value={ad.bedrooms}
+              onChange={(e) => setAd({ ...ad, bedrooms: e.target.value })}
+              required
+            />
+            <input
+              type="number"
+              min="0"
+              className="form-control mb-3"
+              placeholder="Enter how many bathrooms"
+              value={ad.toilets}
+              onChange={(e) => setAd({ ...ad, bathrooms: e.target.value })}
+              required
+            />
+            <input
+              type="number"
+              min="0"
+              className="form-control mb-3"
+              placeholder="Enter how many car parks"
+              value={ad.carpark}
+              onChange={(e) => setAd({ ...ad, carpark: e.target.value })}
+            />
+          </>
+        ) : (
+          ''
+        )}
+
         <input
           type="text"
           className="form-control mb-3"

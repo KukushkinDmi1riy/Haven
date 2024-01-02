@@ -129,3 +129,35 @@ export const ads = async (req, res) => {
     console.log(error);
   }
 };
+
+export const read = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const ad = await Ad.findOne({ slug })
+      // .select("-photos.Key -photos.key -photos.ETag -photos.Bucket")
+      .populate("postedBy", "name username email phone company photo.Location");
+
+    const geo = await config.GOOGLE_GEOCODER.geocode(ad.address);
+    // related
+    const related = await Ad.find({
+      _id: { $ne: ad._id },
+      action: ad?.action,
+      type: ad?.type,
+      address: {
+        $regex: ad.googleMap?.[0]?.administrativeLevels?.level2long || "",
+        $options: "i",
+      },
+    })
+      .limit(3)
+      .select("-photos.Key -photos.key -photos.ETag -photos.Bucket -googleMap")
+      .populate("postedBy", "name username email phone company photo.Location");
+
+    console.log("AD => ", ad);
+
+    res.json({ ad, related });
+  } catch (err) {
+    console.log(err);
+  }
+};
+

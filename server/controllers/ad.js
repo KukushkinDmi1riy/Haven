@@ -161,3 +161,35 @@ export const read = async (req, res) => {
   }
 };
 
+// controllers/ad.js
+export const addToWishlist = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $addToSet: { wishlist: req.body.adId },
+      },
+      { new: true }
+    );
+    const { password, resetCode, ...rest } = user._doc;
+    res.json(rest);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $pull: { wishlist: req.params.adId },
+      },
+      { new: true }
+    );
+    const { password, resetCode, ...rest } = user._doc;
+    res.json(rest);
+  } catch (err) {
+    console.log(err);
+  }
+};

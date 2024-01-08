@@ -51,12 +51,12 @@ export default function AdForm({ action, type }) {
         <ImageUpload ad={ad} setAd={setAd} />
         <GooglePlacesAutocomplete
           apiKey={GOOGLE_PLACES_KEY}
-          apiOptions={{ region: 'ru' }}
+          apiOptions={{ region: 'en' }}
           selectProps={{
             defaultInputValue: ad?.address,
             placeholder: 'Search for address..',
             onChange: ({ value }) => {
-              //   console.log("address onchange => ", value.description);
+            console.log("address onchange => ", value.description);
               setAd({ ...ad, address: value.description });
             },
           }}

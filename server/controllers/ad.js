@@ -115,16 +115,17 @@ export const create = async (req, res) => {
 
 export const ads = async (req, res) => {
   try {
-    const adsForSell = await Ad.find({ action: 'Sell' }).select(
-      '-googleMap -location -photo.Key -photo.key -photo.ETag',
-    ).sort({createdAt: -1}).limit(12);
+    const adsForSell = await Ad.find({ action: 'Sell' })
+      .select('-googleMap -location -photo.Key -photo.key -photo.ETag')
+      .sort({ createdAt: -1 })
+      .limit(12);
 
-	const adsForRent = await Ad.find({ action: 'Rent' })
-    .select('-googleMap -location -photo.Key -photo.key -photo.ETag')
-    .sort({ createdAt: -1 })
-    .limit(12);
+    const adsForRent = await Ad.find({ action: 'Rent' })
+      .select('-googleMap -location -photo.Key -photo.key -photo.ETag')
+      .sort({ createdAt: -1 })
+      .limit(12);
 
-	res.json({adsForSell, adsForRent})
+    res.json({ adsForSell, adsForRent });
   } catch (error) {
     console.log(error);
   }
@@ -136,7 +137,7 @@ export const read = async (req, res) => {
 
     const ad = await Ad.findOne({ slug })
       // .select("-photos.Key -photos.key -photos.ETag -photos.Bucket")
-      .populate("postedBy", "name username email phone company photo.Location");
+      .populate('postedBy', 'name username email phone company photo.Location');
 
     const geo = await config.GOOGLE_GEOCODER.geocode(ad.address);
     // related
@@ -145,15 +146,16 @@ export const read = async (req, res) => {
       action: ad?.action,
       type: ad?.type,
       address: {
-        $regex: ad.googleMap?.[0]?.administrativeLevels?.level2long || "",
-        $options: "i",
+        $regex: ad?.googleMap[0]?.city,
+        $options: 'i',
       },
     })
       .limit(3)
-      .select("-photos.Key -photos.key -photos.ETag -photos.Bucket -googleMap")
-      .populate("postedBy", "name username email phone company photo.Location");
+      .select('-photos.Key -photos.key -photos.ETag -photos.Bucket -googleMap')
+      .populate('postedBy', 'name username email phone company photo.Location');
 
-    console.log("AD => ", ad);
+    console.log('AD => ', ad);
+    console.log('related => ', related);
 
     res.json({ ad, related });
   } catch (err) {
@@ -169,7 +171,7 @@ export const addToWishlist = async (req, res) => {
       {
         $addToSet: { wishlist: req.body.adId },
       },
-      { new: true }
+      { new: true },
     );
     const { password, resetCode, ...rest } = user._doc;
     res.json(rest);
@@ -185,7 +187,7 @@ export const removeFromWishlist = async (req, res) => {
       {
         $pull: { wishlist: req.params.adId },
       },
-      { new: true }
+      { new: true },
     );
     const { password, resetCode, ...rest } = user._doc;
     res.json(rest);

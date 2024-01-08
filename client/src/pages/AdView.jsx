@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import HTMLRenderer from 'react-html-renderer';
+
 import ImageGallery from '../components/cards/ImageGallery';
-import AdFeatures from '../components/cards/AdFeatures'
-import { formatNumber} from '../helpers/ad.js';
-import dayjs from 'dayjs'
+import AdFeatures from '../components/cards/AdFeatures';
+import { formatNumber } from '../helpers/ad.js';
+import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import LikeUnlike from '../components/misc/LikeUnlike';
+import MapCard from '../components/cards/MapCard';
 
 import Logo from '../../src/Logo.svg';
+import AdCard from '../components/cards/AdCard';
 
 dayjs.extend(relativeTime);
 
@@ -66,7 +70,7 @@ export default function AdView() {
               <button className="btn btn-primary disabled mt-2">
                 {ad?.type} for {ad?.action}
               </button>
-			  <LikeUnlike ad={ad}/>
+              <LikeUnlike ad={ad} />
             </div>
 
             <br />
@@ -83,7 +87,29 @@ export default function AdView() {
 
           <div className="col-lg-8">
             <ImageGallery photos={generatePhotosArray(ad?.photos)} />
+
+            <MapCard ad={ad} />
+
+            <br />
+
+            <h1>
+              {ad?.type} in {ad?.address} for {ad?.action} ${ad?.price}
+            </h1>
+            <AdFeatures ad={ad} />
+            <hr />
+            <h3 className="fw-bold">{ad?.title}</h3>
+
+            <HTMLRenderer html={ad?.description?.replaceAll('.', '<br/><br/>')} />
           </div>
+        </div>
+      </div>
+      <div className="container-fluid">
+        <h4 className="d-flex justify-content-center">Related Ads</h4>
+        <hr style={{ width: '33%' }} />
+        <div className="row">
+          {related?.map((ad) => (
+            <AdCard ad={ad} />
+          ))}
         </div>
       </div>
       <pre>{JSON.stringify({ ad, related }, null, 4)}</pre>{' '}

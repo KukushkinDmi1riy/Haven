@@ -19,6 +19,10 @@ import SellHouse from './pages/user/ad/SellHouse';
 import RentLand from './pages/user/ad/RentLand';
 import AdView from './pages/AdView';
 import Footer from './components/nav/Footer';
+import Profile from './pages/user/Profile';
+import Settings from './pages/user/Settings';
+
+
 
 export default function App() {
   return (
@@ -41,11 +45,13 @@ export default function App() {
             <Route path="ad/create/sell/Land" element={<SellLand />} />
             <Route path="ad/create/rent/House" element={<RentHouse />} />
             <Route path="ad/create/rent/Land" element={<RentLand />} />
+            <Route path="/user/profile" element={<Profile />} />
+            <Route path="user/settings" element={<Settings />} />
           </Route>
 
           <Route path="/ad/:slug" element={<AdView />} />
         </Routes>
-		<Footer/>
+        <Footer />
       </AuthProvider>
     </BrowserRouter>
   );

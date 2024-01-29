@@ -46,7 +46,7 @@ export default function AdForm({ action, type }) {
   };
 
   return (
-    <>
+    <div>
       <div className="mb-3 form-control">
         <ImageUpload ad={ad} setAd={setAd} />
         <GooglePlacesAutocomplete
@@ -56,17 +56,19 @@ export default function AdForm({ action, type }) {
             defaultInputValue: ad?.address,
             placeholder: 'Search for address..',
             onChange: ({ value }) => {
-            console.log("address onchange => ", value.description);
+              console.log('address onchange => ', value.description);
               setAd({ ...ad, address: value.description });
             },
           }}
         />
-        <CurrencyInput
-          placeholder="Enter price"
-          defaultValue={ad.price}
-          className="form-control mb-3"
-          onValueChange={(value) => setAd({ ...ad, price: value })}
-        />
+        <div style={{ marginTop: '10px' }}>
+          <CurrencyInput
+            placeholder="Enter price"
+            defaultValue={ad.price}
+            className="form-control mb-3"
+            onValueChange={(value) => setAd({ ...ad, price: value })}
+          />
+        </div>
 
         {type === 'House' ? (
           <>
@@ -129,6 +131,6 @@ export default function AdForm({ action, type }) {
         </button>
         <pre>{JSON.stringify(ad, null, 4)}</pre>
       </div>
-    </>
+    </div>
   );
 }

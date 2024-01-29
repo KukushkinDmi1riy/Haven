@@ -13,6 +13,7 @@ import MapCard from '../components/cards/MapCard';
 
 import Logo from '../../src/Logo.svg';
 import AdCard from '../components/cards/AdCard';
+import ContactSeller from '../components/forms/ContactSeller';
 
 dayjs.extend(relativeTime);
 
@@ -102,6 +103,9 @@ export default function AdView() {
             <HTMLRenderer html={ad?.description?.replaceAll('.', '<br/><br/>')} />
           </div>
         </div>
+      </div>
+      <div className="container">
+        <ContactSeller ad={ad} />
       </div>
       <div className="container-fluid">
         <h4 className="d-flex justify-content-center">Related Ads</h4>

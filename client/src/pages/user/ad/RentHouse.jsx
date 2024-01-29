@@ -6,7 +6,7 @@ export default function RentHouse() {
     <div className="contaienr-fluid">
       <h1 className="display-1 bg-primary text-light p-5">Rent House</h1>
       <SideBar />
-      <div className="container mt-2">
+      <div className="container mt-2 vh-100">
         <AdForm action="Rent" type="House" />
       </div>
     </div>

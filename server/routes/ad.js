@@ -11,10 +11,8 @@ router.post('/ad', requireSignin, ad.create);
 router.get('/ads', ad.ads);
 router.get('/ad/:slug', ad.read);
 
-router.post("/wishlist", requireSignin, ad.addToWishlist);
-router.delete("/wishlist/:adId", requireSignin, ad.removeFromWishlist);
-
-
-
+router.post('/wishlist', requireSignin, ad.addToWishlist);
+router.delete('/wishlist/:adId', requireSignin, ad.removeFromWishlist);
+router.post('/contact-seller', requireSignin, ad.contactSeller);
 
 export default router;

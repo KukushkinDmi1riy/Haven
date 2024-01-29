@@ -7,7 +7,6 @@ import nanoid from 'nanoid';
 import validator from 'email-validator';
 
 const tokenAndUserResponse = (req, res, user) => {
-
   const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
     expiresIn: '1h',
   });
@@ -113,6 +112,9 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     //1.find user
     const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({ error: 'No user found. Please register.' });
+    }
 
     //2.compare password
     const match = await comparePassword(password, user.password);
@@ -174,7 +176,7 @@ export const accessAccount = async (req, res) => {
   try {
     const { resetCode } = jwt.verify(req.body.resetCode, config.JWT_SECRETS);
     const user = await User.findOneAndUpdate({ resetCode }, { resetCode: '' });
-	console.log(user, 'user')
+    console.log(user, 'user');
     tokenAndUserResponse(req, res, user);
   } catch (error) {
     console.log(error);

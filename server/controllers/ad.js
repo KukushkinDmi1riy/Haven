@@ -242,3 +242,88 @@ export const contactSeller = async (req, res) => {
     console.log(err);
   }
 };
+
+export const userAds = async (req, res) => {
+  try {
+    const perPage = 2;
+    const page = req.params.page ? req.params.page : 1;
+
+    const total = await Ad.find({ postedBy: req.user._id });
+
+    const ads = await Ad.find({ postedBy: req.user._id })
+      .populate('postedBy', 'name email username phone company')
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+
+    res.json({ ads, total: total.length });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const updateAd = async (req, res) => {
+  try {
+    const { photos, price, type, address, description } = req.body;
+
+    const ad = await Ad.findById(req.params._id);
+
+    console.log(ad, 'ad');
+
+    const owner = req.user._id == ad?.postedBy;
+
+    if (!owner) {
+      return res.json({ error: 'Permission denied' });
+    } else {
+      // validation
+      if (!photos.length) {
+        return res.json({ error: 'Photos are required' });
+      }
+      if (!price) {
+        return res.json({ error: 'Price is required' });
+      }
+      if (!type) {
+        return res.json({ error: 'Is property hour or land?' });
+      }
+      if (!address) {
+        return res.json({ error: 'Address is required' });
+      }
+      if (!description) {
+        return res.json({ error: 'Description are required' });
+      }
+
+      const geo = await config.GOOGLE_GEOCODER.geocode(address);
+
+      await ad.update({
+        ...req.body,
+        slug: ad.slug,
+        location: {
+          type: 'Point',
+          coordinates: [geo?.[0]?.longitude, geo?.[0]?.latitude],
+        },
+      });
+
+      res.json({ ok: true });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+export const update = async (req, res) => {
+  try {
+    const { photos, price, type, address, description } = req.body;
+    const geo = await config.GOOGLE_GEOCODER.geocode(address);
+    const ad = await Ad.findByIdAndUpdate(req.params._id, {
+      ...req.body,
+    //   slug: ad.slug,
+      location: {
+        type: 'Point',
+        coordinates: [geo?.[0]?.longitude, geo?.[0]?.latitude],
+      },
+    });
+
+    res.json({ ok: true, ad });
+  } catch (err) {
+    console.log(err);
+  }
+};

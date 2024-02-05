@@ -17,7 +17,6 @@ export default function AdForm({ action, type }) {
     bathrooms: '',
     carpark: '',
     landsize: '',
-
     title: '',
     description: '',
     loading: '',

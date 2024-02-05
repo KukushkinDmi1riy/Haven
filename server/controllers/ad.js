@@ -327,3 +327,19 @@ export const update = async (req, res) => {
     console.log(err);
   }
 };
+
+export const remove = async (req, res) => {
+  try {
+    const ad = await Ad.findById(req.params._id);
+    const owner = req.user._id == ad?.postedBy;
+
+    if (!owner) {
+      return res.json({ error: 'Permission denied' });
+    } else {
+      await Ad.findByIdAndRemove(ad._id);
+      res.json({ ok: true });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};

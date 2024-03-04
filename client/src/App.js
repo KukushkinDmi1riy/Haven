@@ -22,8 +22,12 @@ import Footer from './components/nav/Footer';
 import Profile from './pages/user/Profile';
 import Settings from './pages/user/Settings';
 import AdEdit from './pages/user/ad/AdEdit';
-
-
+import Wishlist from './pages/user/Wishlist';
+import Enquiries from './pages/user/Enquiries';
+import Agents from './pages/Agents';
+import Agent from './pages/Agent';
+import Buy from './pages/Buy';
+import Rent from './pages/Rent';
 
 export default function App() {
   return (
@@ -49,9 +53,16 @@ export default function App() {
             <Route path="/user/profile" element={<Profile />} />
             <Route path="user/settings" element={<Settings />} />
             <Route path="user/ad/:slug" element={<AdEdit />} />
+            <Route path="user/wishlist" element={<Wishlist />} />
+            <Route path="user/enquiries" element={<Enquiries />} />
           </Route>
 
           <Route path="/ad/:slug" element={<AdView />} />
+          <Route path="/agents" element={<Agents />} />
+          <Route path="/agent/:username" element={<Agent />} />
+
+          <Route path="/buy" element={<Buy />} />
+          <Route path="/rent" element={<Rent />} />
         </Routes>
         <Footer />
       </AuthProvider>

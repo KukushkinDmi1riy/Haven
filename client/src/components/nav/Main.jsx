@@ -27,6 +27,18 @@ export default function Main() {
         Home
       </NavLink>
 
+      <NavLink className="nav-link" to="/buy">
+        Buy
+      </NavLink>
+	  
+      <NavLink className="nav-link" to="/rent">
+        Rent
+      </NavLink>
+
+      <NavLink className="nav-link" aria-current="page" to="/agents">
+        Agents
+      </NavLink>
+
       <a className="nav-link pointer" onClick={handlePostAdClick}>
         Post Ad
       </a>

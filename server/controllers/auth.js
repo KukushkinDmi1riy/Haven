@@ -5,6 +5,7 @@ import { hashPassword, comparePassword } from '../helpers/auth.js';
 import User from '../models/user.js';
 import nanoid from 'nanoid';
 import validator from 'email-validator';
+import Ad from '../models/ad.js';
 
 const tokenAndUserResponse = (req, res, user) => {
   const token = jwt.sign({ _id: user._id }, config.JWT_SECRETS, {
@@ -260,5 +261,39 @@ export const updateProfile = async (req, res) => {
     } else {
       return res.status(403).json({ error: 'Unauhorized' });
     }
+  }
+};
+
+export const agents = async (req, res) => {
+  try {
+    const agents = await User.find({ role: 'Seller' }).select(
+      '-password -role -enquiredProperties -wishlist -photo.key -photo.Key -photo.Bucket',
+    );
+    res.json(agents);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const agentAdCount = async (req, res) => {
+  try {
+    const ads = await Ad.find({ postedBy: req.params._id }).select('_id');
+    res.json(ads);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const agent = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username }).select(
+      '-password -role -enquiredProperties -wishlist -photo.key -photo.Key -photo.Bucket',
+    );
+    const ads = await Ad.find({ postedBy: user._id }).select(
+      '-photos.key -photos.Key -photos.ETag -photos.Bucket -location -googleMap',
+    );
+    res.json({ user, ads });
+  } catch (err) {
+    console.log(err);
   }
 };

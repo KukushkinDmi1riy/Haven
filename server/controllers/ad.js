@@ -267,9 +267,6 @@ export const updateAd = async (req, res) => {
     const { photos, price, type, address, description } = req.body;
 
     const ad = await Ad.findById(req.params._id);
-
-    console.log(ad, 'ad');
-
     const owner = req.user._id == ad?.postedBy;
 
     if (!owner) {
@@ -343,3 +340,55 @@ export const remove = async (req, res) => {
     console.log(err);
   }
 };
+
+export const enquiriedProperties = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const ads = await Ad.find({ _id: user.enquiredProperties }).sort({
+      createdAt: -1,
+    });
+    res.json(ads);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const wishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const ads = await Ad.find({ _id: user.wishlist }).sort({
+      createdAt: -1,
+    });
+    res.json(ads);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+export const adsForSell = async (req, res) => {
+  try {
+    const ads = await Ad.find({ action: 'Sell' })
+      .select('-googleMap -location -photo.Key -photo.key -photo.ETag')
+      .sort({ createdAt: -1 })
+      .limit(24);
+
+    res.json(ads);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const adsForRent = async (req, res) => {
+  try {
+    const ads = await Ad.find({ action: 'Rent' })
+      .select('-googleMap -location -photo.Key -photo.key -photo.ETag')
+      .sort({ createdAt: -1 })
+      .limit(24);
+
+    res.json(ads);
+  } catch (err) {
+    console.log(err);
+  }
+};
+

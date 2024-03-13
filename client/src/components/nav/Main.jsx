@@ -27,10 +27,14 @@ export default function Main() {
         Home
       </NavLink>
 
+      <NavLink className="nav-link" to="/search">
+        Search
+      </NavLink>
+
       <NavLink className="nav-link" to="/buy">
         Buy
       </NavLink>
-	  
+
       <NavLink className="nav-link" to="/rent">
         Rent
       </NavLink>

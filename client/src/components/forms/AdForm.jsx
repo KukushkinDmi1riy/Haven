@@ -144,7 +144,7 @@ export default function AdForm({ action, type }) {
           onClick={handleSubmit}>
           {ad.loading ? 'Loading...' : 'Submit'}
         </button>
-        <pre>{JSON.stringify(ad, null, 4)}</pre>
+
       </div>
     </div>
   );

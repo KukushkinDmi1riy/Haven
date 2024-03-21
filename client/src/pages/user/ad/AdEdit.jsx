@@ -211,7 +211,6 @@ export default function AdEdit({ action, type }) {
           </button>
         </div>
 
-        {/* <pre>{JSON.stringify(ad, null, 4)}</pre> */}
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export default function Home() {
         </div>
       </div>
 
-      <pre> {JSON.stringify({ adsForSell, adsForRent }, null, 4)}</pre>
+
     </div>
   );
 }

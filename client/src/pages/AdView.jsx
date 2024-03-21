@@ -116,7 +116,7 @@ export default function AdView() {
           ))}
         </div>
       </div>
-      <pre>{JSON.stringify({ ad, related }, null, 4)}</pre>{' '}
+
     </>
   );
 }
